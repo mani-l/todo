@@ -11,4 +11,4 @@ export const databaseConfig: SequelizeModuleOptions = {
   synchronize: true,       
 };
 
-export default databaseConfig
+export default databaseConfig   
