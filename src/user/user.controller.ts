@@ -1,13 +1,14 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from 'src/dto/createuser.dto';
+import { ApiResponse } from 'src/response/responsemessage';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userservice: UserService) {}
 
   @Post('signup')
-  async createuser(@Body() userdeatils: CreateUserDto): Promise<CreateUserDto> {
+  async createuser(@Body() userdeatils: CreateUserDto): Promise<any> {
     return this.userservice.createuser(
       userdeatils.user_name,
       userdeatils.email,
@@ -19,7 +20,7 @@ export class UserController {
   async userlogin(
     @Body() email: string,
     password: string,
-  ): Promise<CreateUserDto> {
+  ): Promise<ApiResponse> {
     const temp = { email, password };
     return this.userservice.userlogin(email);
   }

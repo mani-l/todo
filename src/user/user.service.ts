@@ -7,13 +7,17 @@ import { UserModel } from 'src/entity/user.entity';
 import { jwtConstants } from './constants';
 import { StoreTokenModel } from 'src/entity/storetoken.entity';
 import { TodoModel } from 'src/entity/todo.entity';
+import {
+  ApiResponse,
+  responseMessageGenerator,
+} from 'src/response/responsemessage';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(UserModel) private usermodel: typeof UserModel,
     @InjectModel(StoreTokenModel) private tokenmodel: typeof StoreTokenModel,
-    @InjectModel(TodoModel) private todomodel:typeof TodoModel,
+    @InjectModel(TodoModel) private todomodel: typeof TodoModel,
     private jwtservice: JwtService,
   ) {}
 
@@ -21,12 +25,12 @@ export class UserService {
     user_name: string,
     email: string,
     password: string,
-  ): Promise<CreateUserDto> {
+  ): Promise<ApiResponse> {
     // const salt = await genSaltSync(10);
     const hasspassword = await hashSync(password, genSaltSync(10));
     let temp = { user_name, email, password: hasspassword };
     const user = await this.usermodel.create(temp);
-    return user;
+    return await responseMessageGenerator('success', 'createuser', user);
   }
 
   async userlogin(temp): Promise<any> {
@@ -100,21 +104,22 @@ export class UserService {
     return 'logout successfully';
   }
 
-
   async gettaskbyuserid(id: number) {
-    console.log(id)
+    console.log(id);
     const data = await this.usermodel.findOne({
-     where:{id:id},
-     attributes:['id','user_name','email','password'],
-     include:{association:"todotable", attributes: [
-      'tittle',
-      'task',
-      'task_creation_date',
-      'last_date',
-      'is_completed',
-    ],},
-    
+      where: { id: id },
+      attributes: ['id', 'user_name', 'email', 'password'],
+      include: {
+        association: 'todotable',
+        attributes: [
+          'tittle',
+          'task',
+          'task_creation_date',
+          'last_date',
+          'is_completed',
+        ],
+      },
     });
-    return data
+    return data;
   }
 }
